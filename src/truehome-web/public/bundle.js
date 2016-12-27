@@ -114,10 +114,10 @@
 	            request += this.props.id;
 	            request += '/';
 	            request += status ? '1' : '0';
-	            // Change in the real controller
+	            // Change the state of the real controller
 	            axios.get(request).then(function (result) {
 	                _this4.setState({ switchedOn: result.data[0].status == 1 ? true : false });
-	                // Renable the timer
+	                // Re-enable the timer
 	                _this4.timerID = setInterval(function () {
 	                    return _this4.tick();
 	                }, 2000);
@@ -164,14 +164,14 @@
 	                React.createElement(
 	                    'td',
 	                    null,
-	                    React.createElement(_reactBootstrapToggle2.default, {
+	                    this.props.hasStatus && React.createElement(_reactBootstrapToggle2.default, {
 	                        key: this.props.id,
 	                        on: 'ON',
 	                        off: 'OFF',
 	                        active: switchedOn,
 	                        size: 'mini', onstyle: 'success', offstyle: 'danger',
 	                        onChange: function onChange() {
-	                            return _this5.triggerSwitch(!switchedOn);
+	                            return _this5.triggerSwitch(!switchedOn).bind(_this5);
 	                        } })
 	                )
 	            );
@@ -220,7 +220,8 @@
 	                        'tbody',
 	                        null,
 	                        this.state.controllers.map(function (controller, index) {
-	                            return React.createElement(Controller, { name: controller.name, id: controller.id, key: controller.id });
+	                            return React.createElement(Controller, { name: controller.name, id: controller.id, key: controller.id,
+	                                hasStatus: controller.status != null ? true : false });
 	                        })
 	                    )
 	                )

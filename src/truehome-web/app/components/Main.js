@@ -40,15 +40,15 @@ class Controller extends React.Component
        request += this.props.id;
        request += '/';
        request += status ? '1' : '0';
-       // Change in the real controller
+       // Change the state of the real controller
        axios.get(request)
             .then(result=> {
                 this.setState({switchedOn: result.data[0].status == 1 ? true : false});
-                // Renable the timer
+                // Re-enable the timer
                 this.timerID = setInterval(
                 () => this.tick(),
                 2000);
-        });
+            });
        this.timerID = setInterval(
                 () => this.tick(),
                 2000);
@@ -60,20 +60,19 @@ class Controller extends React.Component
         const temp = null || this.state.temperature;
 
         return (
-
-                     <tr>
-                     <td><h5 className='controller'>{this.props.name}{ watts != null &&
-                     <small> {watts} Watts</small>
-                     }{ temp != null &&
-                     <small> {parseFloat((temp - 32)*5/9).toFixed(2)} °C</small>
-                     }</h5></td>
-                     <td>{<ReactBootstrapToggle
-                         key={this.props.id}
-                         on="ON"
-                         off="OFF"
-                         active={switchedOn}
-                         size="mini" onstyle="success" offstyle="danger"
-                         onChange={()=> this.triggerSwitch(!switchedOn)}/>}</td></tr>
+                 <tr>
+                 <td><h5 className='controller'>{this.props.name}{ watts != null &&
+                 <small> {watts} Watts</small>
+                 }{ temp != null &&
+                 <small> {parseFloat((temp - 32)*5/9).toFixed(2)} °C</small>
+                 }</h5></td>
+                 <td>{this.props.hasStatus && <ReactBootstrapToggle
+                     key={this.props.id}
+                     on="ON"
+                     off="OFF"
+                     active={switchedOn}
+                     size="mini" onstyle="success" offstyle="danger"
+                     onChange={()=> this.triggerSwitch(!switchedOn).bind(this)}/>}</td></tr>
 
         );
     }
@@ -99,7 +98,8 @@ class Room extends React.Component {
                     <h3>{this.props.name}</h3>
                     <table className="table table-sm"><tbody>
                     {this.state.controllers.map(function(controller, index){
-                     return <Controller name={controller.name} id={controller.id} key={controller.id}/>;
+                     return <Controller name={controller.name} id={controller.id} key={controller.id}
+                     hasStatus={controller.status != null ? true : false}/>;
                     })}</tbody></table>
                 </div>
         );
