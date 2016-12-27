@@ -1,68 +1,81 @@
 from neobunch import neobunchify as bunchify
-from flask import Flask, request
+from flask import Flask, jsonify
 from relayer_requests import true_home_api, data_retrieval, data_manipulation
 import json
+
 
 app = Flask(__name__)
 
 
+def prepare_response(data):
+    response = jsonify(data)
+    return response
+
+
 @app.route('/summary', methods=['GET'])
-@true_home_api()
+@true_home_api(permission_needed=True)
 def get_all_data(**kwargs):
-    pass
+    data = data_retrieval(**kwargs)
+    return prepare_response(data)
 
 
 @app.route('/rooms/')
 @app.route('/rooms/<int:room_id>')
-@true_home_api(transparent=True)
+@true_home_api(permission_needed=False)
 def all_rooms(room_id=None, **kwargs):
-    data = all_rooms.data
+    if room_id:
+        kwargs.update({'room_id': room_id})
+    data = data_retrieval(**kwargs)
     if data:
         data = bunchify(json.loads(data))
 
     if room_id:
         room = [room for room in data.rooms if room.id == room_id]
         if len(room) == 1:
-            data = json.dumps(room)
+            data = room
+    else:
+        data = data.rooms
 
-    return data
+    return prepare_response(data)
 
 
 @app.route('/devices', methods=['GET'])
 @app.route('/devices/<int:device_id>', methods=['GET'])
-@true_home_api(transparent=True)
+@true_home_api(permission_needed=False)
 def get_devices(device_id=None, **kwargs):
-    data = get_devices.data
+    if device_id:
+        kwargs.update({'device_id': device_id})
+    data = data_retrieval(**kwargs)
     if data:
         data = bunchify(json.loads(data))
 
     if device_id:
         device = [device for device in data.devices if device.id == device_id]
         if len(device) == 1:
-            data = json.dumps(device)
+            data = device
+    else:
+        data = data.devices
 
-    return data
+    return prepare_response(data)
 
 
 @app.route('/devices/by-room/<int:room_id>', methods=['GET'])
-@true_home_api(transparent=True)
+@true_home_api(permission_needed=False)
 def get_devices_in_room(room_id=None, **kwargs):
-    data = get_devices_in_room.data
+    kwargs.update({'room_id': room_id})
+    data = data_retrieval(**kwargs)
     if data:
         data = bunchify(json.loads(data))
 
     if room_id:
         device = [device for device in data.devices if device.room == room_id]
-        data = json.dumps(device)
+        data = device
 
-    return data
+    return prepare_response(data)
 
 
-@app.route('/devices/<int:device_id>/<int:status>', methods=['GET'])
-@true_home_api(transparent=True)
+@app.route('/devices/<int:device_id>/<int:status>', methods=['GET','PUT'])
+@true_home_api(permission_needed=True)
 def set_device_status(device_id, status):
-    return data_manipulation(**{'device_id': device_id,
-                                'status': status})
-
-if __name__ == '__main__':
-    app.run(debug=True)
+    return prepare_response(data_manipulation(**{'device_id': device_id,
+                                                 'status': status}))

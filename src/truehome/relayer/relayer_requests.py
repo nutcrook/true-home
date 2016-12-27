@@ -1,5 +1,6 @@
+from neobunch import neobunchify as bunchify
 from functools import wraps
-from truehome.utils.decorators import requires_authentication
+import json
 import requests
 
 
@@ -10,21 +11,22 @@ CHANGE_REQUEST_PARAMS_MAP = {
     # DeviceNum and newTargetValue are being populated later on.
     'id': 'action',
     'serviceId': 'urn:upnp-org:serviceId:SwitchPower1',
-    'action': 'SetTarget'
+    'action': 'SetTarget',
+    'output_format': 'json'
 }
 
 READ_REQUEST_PARAMS_MAP = {
-    'data': {'id': 'sdata'}
+    'data': {'id': 'sdata',
+             'output_format': 'json'}
 }
 
-BASE_PARAMS = {
-    'output_format': 'json'
-}
+
+def null_func(**kwargs):
+    return '{}'
 
 
 def align_change_request_params(**request_params):
     request_params.update(CHANGE_REQUEST_PARAMS_MAP)
-    request_params.update(BASE_PARAMS)
 
     request_params['DeviceNum'] = request_params['device_id']
     del request_params['device_id']
@@ -36,46 +38,52 @@ def align_change_request_params(**request_params):
 
 
 def data_manipulation(**kwargs):
-    request_params = align_change_request_params(**kwargs)
-    try:
-        r = requests.get(REQUEST_TEMPLATE, params=request_params)
-        if r.status_code == 200:
-            return r.text
-        else:
-            return 'Return Code {}: {}'.format(r.status_code, r.text)
-    except Exception as e:
-        return str(e)
+    def validate(**kwargs):
+        device_id = kwargs.get('device_id')
+        new_status = kwargs.get('status')
+
+        data = bunchify(json.loads(data_retrieval(**kwargs)))
+        device = [device for device in data.devices if device.id == device_id and int(device.status) != new_status]
+        return device
+
+    # Make sure the desired device (identified by device_id) has a status different form the desired status.
+    if validate(**kwargs):
+        request_params = align_change_request_params(**kwargs)
+        try:
+            r = requests.get(REQUEST_TEMPLATE, params=request_params)
+            if r.status_code == 200:
+                return r.text
+            else:
+                return 'Return Code {}: {}'.format(r.status_code, r.text)
+        except Exception as e:
+            return str(e)
+    else:
+        return 'Hi there, nothing to do. Sorry...'
 
 
 def data_retrieval(request_key='data', **kwargs):
     # Initialize request specific params
     request_params = READ_REQUEST_PARAMS_MAP[request_key]
     request_params.update(kwargs)
-    # Add the base parameters
-    request_params.update(BASE_PARAMS)
+
     try:
         r = requests.get(REQUEST_TEMPLATE, params=request_params)
         if r.status_code == 200:
             return r.text
         else:
-            return 'Return Code {}: {}'.format(r.status_code, r.text)
+            return 'Woops! Return Code {}: {}'.format(r.status_code, r.text)
     except Exception as e:
         return str(e)
 
 
-@requires_authentication()
-def true_home_api(request_key='data', transparent=False):
+def true_home_api(permission_needed):
     def api_decorator(func, **kwargs):
         @wraps(func)
         def wrapper(**kwargs):
-            if transparent:
+            if permission_needed or not permission_needed:
+                # Can the user perform the action?
+                # Validation goes here.
                 return func(**kwargs)
-            else:
-                return data_retrieval(request_key, **kwargs)
 
-        if transparent:
-            setattr(wrapper, 'data', data_retrieval(request_key, **kwargs))
-        setattr(wrapper, 'key', request_key)
         return wrapper
-
     return api_decorator
