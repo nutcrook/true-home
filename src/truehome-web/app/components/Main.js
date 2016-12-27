@@ -42,16 +42,12 @@ class Controller extends React.Component
        request += status ? '1' : '0';
        // Change the state of the real controller
        axios.get(request)
-            .then(result=> {
-                this.setState({switchedOn: result.data[0].status == 1 ? true : false});
+            .then(()=> {
                 // Re-enable the timer
                 this.timerID = setInterval(
                 () => this.tick(),
                 2000);
             });
-       this.timerID = setInterval(
-                () => this.tick(),
-                2000);
    }
 
    render() {
@@ -59,14 +55,18 @@ class Controller extends React.Component
         const switchedOn = this.state.switchedOn;
         const temp = null || this.state.temperature;
 
+        var buttonColStyle = {
+            "text-align": "right"
+        };
+
         return (
                  <tr>
-                 <td><h5 className='controller'>{this.props.name}{ watts != null &&
+                 <td width="90%"><h5 className='controller'>{this.props.name}{ watts != null &&
                  <small> {watts} Watts</small>
                  }{ temp != null &&
                  <small> {parseFloat((temp - 32)*5/9).toFixed(2)} °C</small>
                  }</h5></td>
-                 <td>{this.props.hasStatus && <ReactBootstrapToggle
+                 <td style={buttonColStyle}>{this.props.hasStatus && <ReactBootstrapToggle
                      key={this.props.id}
                      on="ON"
                      off="OFF"
@@ -93,11 +93,17 @@ class Room extends React.Component {
     }
 
     render() {
+        var tableStyle = {
+            padding: "10px",
+            width: "90vw"
+        };
+
+
         return (
                 <div>
                     <h3>{this.props.name}</h3>
-                    <table className="table table-sm"><tbody>
-                    {this.state.controllers.map(function(controller, index){
+                    <table className="table table-sm" style={tableStyle}><tbody>
+                    {this.state.controllers.map(function(controller){
                      return <Controller name={controller.name} id={controller.id} key={controller.id}
                      hasStatus={controller.status != null ? true : false}/>;
                     })}</tbody></table>
@@ -135,7 +141,7 @@ class Body extends React.Component
     render() {
         return (
                 <div>
-                    {this.state.rooms.map(function(room, index){
+                    {this.state.rooms.map(function(room){
                      return <Room name={ room.name } id={room.id} key={room.id}/>;
                   })}
 

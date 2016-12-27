@@ -115,16 +115,12 @@
 	            request += '/';
 	            request += status ? '1' : '0';
 	            // Change the state of the real controller
-	            axios.get(request).then(function (result) {
-	                _this4.setState({ switchedOn: result.data[0].status == 1 ? true : false });
+	            axios.get(request).then(function () {
 	                // Re-enable the timer
 	                _this4.timerID = setInterval(function () {
 	                    return _this4.tick();
 	                }, 2000);
 	            });
-	            this.timerID = setInterval(function () {
-	                return _this4.tick();
-	            }, 2000);
 	        }
 	    }, {
 	        key: 'render',
@@ -135,12 +131,16 @@
 	            var switchedOn = this.state.switchedOn;
 	            var temp = null || this.state.temperature;
 
+	            var buttonColStyle = {
+	                "text-align": "right"
+	            };
+
 	            return React.createElement(
 	                'tr',
 	                null,
 	                React.createElement(
 	                    'td',
-	                    null,
+	                    { width: '90%' },
 	                    React.createElement(
 	                        'h5',
 	                        { className: 'controller' },
@@ -163,7 +163,7 @@
 	                ),
 	                React.createElement(
 	                    'td',
-	                    null,
+	                    { style: buttonColStyle },
 	                    this.props.hasStatus && React.createElement(_reactBootstrapToggle2.default, {
 	                        key: this.props.id,
 	                        on: 'ON',
@@ -205,6 +205,11 @@
 	    }, {
 	        key: 'render',
 	        value: function render() {
+	            var tableStyle = {
+	                padding: "10px",
+	                width: "90vw"
+	            };
+
 	            return React.createElement(
 	                'div',
 	                null,
@@ -215,11 +220,11 @@
 	                ),
 	                React.createElement(
 	                    'table',
-	                    { className: 'table table-sm' },
+	                    { className: 'table table-sm', style: tableStyle },
 	                    React.createElement(
 	                        'tbody',
 	                        null,
-	                        this.state.controllers.map(function (controller, index) {
+	                        this.state.controllers.map(function (controller) {
 	                            return React.createElement(Controller, { name: controller.name, id: controller.id, key: controller.id,
 	                                hasStatus: controller.status != null ? true : false });
 	                        })
@@ -286,7 +291,7 @@
 	            return React.createElement(
 	                'div',
 	                null,
-	                this.state.rooms.map(function (room, index) {
+	                this.state.rooms.map(function (room) {
 	                    return React.createElement(Room, { name: room.name, id: room.id, key: room.id });
 	                })
 	            );
