@@ -71,7 +71,7 @@
 
 	        var _this = _possibleConstructorReturn(this, (Controller.__proto__ || Object.getPrototypeOf(Controller)).call(this, props));
 
-	        _this.state = { watts: null, switchedOn: false, temperature: null };
+	        _this.state = { watts: null, status: false, temperature: null, stateSet: false };
 	        return _this;
 	    }
 
@@ -96,8 +96,9 @@
 
 	            axios.get('http://localhost:9090/devices/' + this.props.id).then(function (result) {
 	                _this3.setState({ watts: result.data[0].watts,
-	                    switchedOn: result.data[0].status == 1 ? true : false,
-	                    temperature: result.data[0].temperature });
+	                    status: result.data[0].status == 1 ? true : false,
+	                    temperature: result.data[0].temperature,
+	                    stateSet: true });
 	            });
 	        }
 	    }, {
@@ -108,7 +109,7 @@
 	            // Temporarily disable the timer
 	            clearInterval(this.timerID);
 	            // Make sure the UI is updated
-	            this.setState({ switchedOn: status });
+	            this.setState({ status: status });
 
 	            var request = 'http://localhost:9090/devices/';
 	            request += this.props.id;
@@ -127,12 +128,12 @@
 	        value: function render() {
 	            var _this5 = this;
 
-	            var watts = null || this.state.watts;
-	            var switchedOn = this.state.switchedOn;
-	            var temp = null || this.state.temperature;
+	            var watts = this.state.stateSet == true ? this.state.watts : this.props.watts;
+	            var switchedOn = this.state.stateSet == true ? this.state.status : this.props.status;
+	            var temp = this.state.stateSet == true ? this.state.temperature : this.props.temperature;
 
 	            var buttonColStyle = {
-	                "text-align": "right"
+	                textAlign: "right"
 	            };
 
 	            return React.createElement(
@@ -206,13 +207,12 @@
 	        key: 'render',
 	        value: function render() {
 	            var tableStyle = {
-	                padding: "10px",
-	                width: "90vw"
+	                width: "70vw"
 	            };
 
 	            return React.createElement(
 	                'div',
-	                null,
+	                { style: { padding: '15px' } },
 	                React.createElement(
 	                    'h3',
 	                    null,
@@ -225,8 +225,12 @@
 	                        'tbody',
 	                        null,
 	                        this.state.controllers.map(function (controller) {
-	                            return React.createElement(Controller, { name: controller.name, id: controller.id, key: controller.id,
-	                                hasStatus: controller.status != null ? true : false });
+	                            return React.createElement(Controller, { name: controller.name,
+	                                id: controller.id,
+	                                key: controller.id,
+	                                hasStatus: controller.status != null ? true : false,
+	                                status: controller.status == "1" ? true : false,
+	                                watts: controller.watts });
 	                        })
 	                    )
 	                )
@@ -325,7 +329,7 @@
 	    return Content;
 	}(React.Component);
 
-	ReactDOM.render(React.createElement(Content, null), document.getElementById('root'));
+	ReactDOM.render(React.createElement(Content, null), document.getElementById('app'));
 
 /***/ },
 /* 1 */

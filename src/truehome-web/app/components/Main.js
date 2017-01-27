@@ -8,7 +8,7 @@ class Controller extends React.Component
     constructor(props)
     {
         super(props);
-        this.state = ({watts: null, switchedOn: false, temperature: null});
+        this.state = ({watts: null, status: false, temperature: null, stateSet: false});
     }
 
     componentWillMount() {
@@ -25,8 +25,9 @@ class Controller extends React.Component
        axios.get('http://localhost:9090/devices/' + this.props.id)
             .then(result=> {
                 this.setState({watts: result.data[0].watts,
-                               switchedOn: result.data[0].status == 1 ? true : false,
-                               temperature: result.data[0].temperature});
+                               status: result.data[0].status == 1 ? true : false,
+                               temperature: result.data[0].temperature,
+                               stateSet: true});
             });
     }
 
@@ -34,7 +35,7 @@ class Controller extends React.Component
        // Temporarily disable the timer
        clearInterval(this.timerID);
        // Make sure the UI is updated
-       this.setState({switchedOn: status});
+       this.setState({status: status});
 
        var request = 'http://localhost:9090/devices/';
        request += this.props.id;
@@ -51,12 +52,12 @@ class Controller extends React.Component
    }
 
    render() {
-        const watts =  null || this.state.watts;
-        const switchedOn = this.state.switchedOn;
-        const temp = null || this.state.temperature;
+        const watts = this.state.stateSet == true ? this.state.watts : this.props.watts;
+        const switchedOn = this.state.stateSet == true ? this.state.status : this.props.status;
+        const temp =  this.state.stateSet == true ? this.state.temperature : this.props.temperature;
 
         var buttonColStyle = {
-            "text-align": "right"
+            textAlign: "right"
         };
 
         return (
@@ -94,18 +95,21 @@ class Room extends React.Component {
 
     render() {
         var tableStyle = {
-            padding: "10px",
-            width: "90vw"
+            width: "70vw",
         };
 
 
         return (
-                <div>
+                <div style={{padding: '15px'}}>
                     <h3>{this.props.name}</h3>
                     <table className="table table-sm" style={tableStyle}><tbody>
                     {this.state.controllers.map(function(controller){
-                     return <Controller name={controller.name} id={controller.id} key={controller.id}
-                     hasStatus={controller.status != null ? true : false}/>;
+                     return <Controller name={controller.name}
+                                        id={controller.id}
+                                        key={controller.id}
+                                        hasStatus={controller.status != null ? true : false}
+                                        status={controller.status == "1" ? true : false}
+                                        watts = {controller.watts}/>;
                     })}</tbody></table>
                 </div>
         );
@@ -164,4 +168,4 @@ class Content extends React.Component
 }
 
 
-ReactDOM.render(<Content/>, document.getElementById('root'));
+ReactDOM.render(<Content/>, document.getElementById('app'));
