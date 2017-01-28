@@ -65,10 +65,10 @@
 
 
 	var instance = axios.create({
-	    baseURL: '/',
+	    baseURL: '/api',
 	    timeout: 1000,
 	    proxy: {
-	        host: 'truehome-nutcrook.home.dyndns.org:9090'
+	        host: 'truehome-nutcrook.home.dyndns.org'
 	    }
 	});
 
