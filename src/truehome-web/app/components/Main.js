@@ -1,6 +1,11 @@
 var React = require('react');
 var ReactDOM = require('react-dom');
-import ReactBootstrapToggle from 'react-bootstrap-toggle';
+import injectTapEventPlugin from 'react-tap-event-plugin';
+import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
+import AppBar from 'material-ui/AppBar';
+import Toggle from 'material-ui/Toggle';
+
+injectTapEventPlugin();
 
 var instance = axios.create({
   baseURL: '/api',
@@ -63,6 +68,21 @@ class Controller extends React.Component
         const switchedOn = this.state.stateSet == true ? this.state.status : this.props.status;
         const temp =  this.state.stateSet == true ? this.state.temperature : this.props.temperature;
 
+        const styles = {
+          thumbSwitched: {
+            backgroundColor: '#388E3C',
+          },
+          thumbOff: {
+            backgroundColor: '#D32F2F',
+          },
+          trackOff: {
+            backgroundColor: '#EF9A9A',
+          },
+          trackSwitched: {
+            backgroundColor: '#A5D6A7',
+          }
+        };
+
         var buttonColStyle = {
             textAlign: "right"
         };
@@ -74,14 +94,14 @@ class Controller extends React.Component
                  }{ temp != null &&
                  <small> {parseFloat((temp - 32)*5/9).toFixed(2)} °C</small>
                  }</h5></td>
-                 <td style={buttonColStyle}>{this.props.hasStatus && <ReactBootstrapToggle
-                     key={this.props.id}
-                     on="ON"
-                     off="OFF"
-                     active={switchedOn}
-                     size="mini" onstyle="success" offstyle="danger"
-                     onChange={()=> this.triggerSwitch(!switchedOn).bind(this)}/>}</td></tr>
-
+                 <td style={buttonColStyle}>{this.props.hasStatus && <Toggle
+                     toggled={switchedOn}
+                     disabled={false}
+                     thumbStyle={styles.thumbOff}
+                     thumbSwitchedStyle={styles.thumbSwitched}
+                     trackStyle={styles.trackOff}
+                     trackSwitchedStyle={styles.trackSwitched}
+                     onToggle={()=> this.triggerSwitch(!switchedOn).bind(this)}/>}</td></tr>
         );
     }
 
@@ -129,7 +149,9 @@ class Header extends React.Component
     {
         return (
                 <div>
-                    <h1>TrueHome</h1>
+                    <AppBar
+                        title="TrueHome"
+                        iconClassNameRight="muidocs-icon-navigation-expand-more"/>
                 </div>
         );
     }
@@ -166,10 +188,12 @@ class Content extends React.Component
    render()
    {
        return (
+           <MuiThemeProvider>
                <div>
                    <Header/>
                    <Body/>
                </div>
+           </MuiThemeProvider>
        );
    }
 }
