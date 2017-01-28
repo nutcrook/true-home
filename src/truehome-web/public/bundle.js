@@ -120,7 +120,7 @@
 	            // Make sure the UI is updated
 	            this.setState({ status: status });
 
-	            var request = '/devices';
+	            var request = '/devices/';
 	            request += this.props.id;
 	            request += '/';
 	            request += status ? '1' : '0';
