@@ -19,7 +19,7 @@ def get_all_data(**kwargs):
     return prepare_response(data)
 
 
-@app.route('/rooms')
+@app.route('/rooms', methods=['GET'])
 @app.route('/rooms/<int:room_id>')
 @true_home_api(permission_needed=False)
 def all_rooms(room_id=None, **kwargs):
