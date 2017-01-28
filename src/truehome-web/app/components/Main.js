@@ -44,7 +44,7 @@ class Controller extends React.Component
        // Make sure the UI is updated
        this.setState({status: status});
 
-       var request = '/devices/';
+       var request = '/devices';
        request += this.props.id;
        request += '/';
        request += status ? '1' : '0';
@@ -143,7 +143,7 @@ class Body extends React.Component
     }
 
     componentDidMount() {
-        instance.get('/rooms/')
+        instance.get('/rooms')
                 .then(result=> {
                     this.setState({rooms:result.data});
                 });

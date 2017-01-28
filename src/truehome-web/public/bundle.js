@@ -120,7 +120,7 @@
 	            // Make sure the UI is updated
 	            this.setState({ status: status });
 
-	            var request = '/devices/';
+	            var request = '/devices';
 	            request += this.props.id;
 	            request += '/';
 	            request += status ? '1' : '0';
@@ -294,7 +294,7 @@
 	        value: function componentDidMount() {
 	            var _this10 = this;
 
-	            instance.get('/rooms/').then(function (result) {
+	            instance.get('/rooms').then(function (result) {
 	                _this10.setState({ rooms: result.data });
 	            });
 	        }
