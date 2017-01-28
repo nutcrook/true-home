@@ -6,8 +6,7 @@ var instance = axios.create({
   baseURL: '/',
   timeout: 1000,
   proxy: {
-    host: 'truehome-nutcrook.home.dyndns.org',
-    port: 9090,
+    host: 'truehome-nutcrook.home.dyndns.org:9090',
   }
 });
 
