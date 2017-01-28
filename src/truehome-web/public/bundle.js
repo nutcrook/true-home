@@ -63,6 +63,16 @@
 	var React = __webpack_require__(2);
 	var ReactDOM = __webpack_require__(33);
 
+
+	var instance = axios.create({
+	    baseURL: '/',
+	    timeout: 1000,
+	    proxy: {
+	        host: '127.0.0.1',
+	        port: 9090
+	    }
+	});
+
 	var Controller = function (_React$Component) {
 	    _inherits(Controller, _React$Component);
 
@@ -94,7 +104,7 @@
 	        value: function tick() {
 	            var _this3 = this;
 
-	            axios.get('http://localhost:9090/devices/' + this.props.id).then(function (result) {
+	            instance.get('/devices/' + this.props.id).then(function (result) {
 	                _this3.setState({ watts: result.data[0].watts,
 	                    status: result.data[0].status == 1 ? true : false,
 	                    temperature: result.data[0].temperature,
@@ -111,12 +121,12 @@
 	            // Make sure the UI is updated
 	            this.setState({ status: status });
 
-	            var request = 'http://localhost:9090/devices/';
+	            var request = '/devices/';
 	            request += this.props.id;
 	            request += '/';
 	            request += status ? '1' : '0';
 	            // Change the state of the real controller
-	            axios.get(request).then(function () {
+	            instance.get(request).then(function () {
 	                // Re-enable the timer
 	                _this4.timerID = setInterval(function () {
 	                    return _this4.tick();
@@ -199,7 +209,7 @@
 	        value: function componentDidMount() {
 	            var _this7 = this;
 
-	            axios.get('http://localhost:9090/devices/by-room/' + this.props.id).then(function (result) {
+	            instance.get('/devices/by-room/' + this.props.id).then(function (result) {
 	                _this7.setState({ controllers: result.data });
 	            });
 	        }
@@ -285,7 +295,7 @@
 	        value: function componentDidMount() {
 	            var _this10 = this;
 
-	            axios.get('http://localhost:9090/rooms/').then(function (result) {
+	            instance.get('/rooms/').then(function (result) {
 	                _this10.setState({ rooms: result.data });
 	            });
 	        }

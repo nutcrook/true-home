@@ -2,6 +2,14 @@ var React = require('react');
 var ReactDOM = require('react-dom');
 import ReactBootstrapToggle from 'react-bootstrap-toggle';
 
+var instance = axios.create({
+  baseURL: '/',
+  timeout: 1000,
+  proxy: {
+    host: '127.0.0.1',
+    port: 9090,
+  }
+});
 
 class Controller extends React.Component
 {
@@ -22,7 +30,7 @@ class Controller extends React.Component
    }
 
    tick() {
-       axios.get('http://localhost:9090/devices/' + this.props.id)
+       instance.get('/devices/' + this.props.id)
             .then(result=> {
                 this.setState({watts: result.data[0].watts,
                                status: result.data[0].status == 1 ? true : false,
@@ -37,12 +45,12 @@ class Controller extends React.Component
        // Make sure the UI is updated
        this.setState({status: status});
 
-       var request = 'http://localhost:9090/devices/';
+       var request = '/devices/';
        request += this.props.id;
        request += '/';
        request += status ? '1' : '0';
        // Change the state of the real controller
-       axios.get(request)
+       instance.get(request)
             .then(()=> {
                 // Re-enable the timer
                 this.timerID = setInterval(
@@ -87,7 +95,7 @@ class Room extends React.Component {
         this.state = {controllers: []};
     }
     componentDidMount() {
-    axios.get('http://localhost:9090/devices/by-room/' + this.props.id)
+    instance.get('/devices/by-room/' + this.props.id)
             .then(result=> {
                 this.setState({controllers:result.data});
             });
@@ -136,7 +144,7 @@ class Body extends React.Component
     }
 
     componentDidMount() {
-        axios.get('http://localhost:9090/rooms/')
+        instance.get('/rooms/')
                 .then(result=> {
                     this.setState({rooms:result.data});
                 });
