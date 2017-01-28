@@ -136,7 +136,7 @@ class Body extends React.Component
     }
 
     componentDidMount() {
-        axios.get('http://localhost:9090/rooms')
+        axios.get('http://localhost:9090/rooms/')
                 .then(result=> {
                     this.setState({rooms:result.data});
                 });
