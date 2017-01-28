@@ -2,6 +2,12 @@ var React = require('react');
 var ReactDOM = require('react-dom');
 import injectTapEventPlugin from 'react-tap-event-plugin';
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
+import getMuiTheme from 'material-ui/styles/getMuiTheme';
+import {
+    grey400,
+    green700,
+    grey900,
+} from 'material-ui/styles/colors';
 import AppBar from 'material-ui/AppBar';
 import Toggle from 'material-ui/Toggle';
 
@@ -13,6 +19,12 @@ var instance = axios.create({
   proxy: {
     host: 'truehome-nutcrook.home.dyndns.org',
   }
+});
+
+const muiTheme = getMuiTheme({
+  palette: {
+      primary1Color: green700,
+  },
 });
 
 class Controller extends React.Component
@@ -89,17 +101,14 @@ class Controller extends React.Component
 
         return (
                  <tr>
-                 <td width="90%"><h5 className='controller'>{this.props.name}{ watts != null &&
+                 <td width="100%"><h5 className='controller'>{this.props.name}{ watts != null &&
                  <small> {watts} Watts</small>
                  }{ temp != null &&
                  <small> {parseFloat((temp - 32)*5/9).toFixed(2)} °C</small>
                  }</h5></td>
                  <td style={buttonColStyle}>{this.props.hasStatus && <Toggle
                      toggled={switchedOn}
-                     disabled={false}
-                     thumbStyle={styles.thumbOff}
                      thumbSwitchedStyle={styles.thumbSwitched}
-                     trackStyle={styles.trackOff}
                      trackSwitchedStyle={styles.trackSwitched}
                      onToggle={()=> this.triggerSwitch(!switchedOn).bind(this)}/>}</td></tr>
         );
@@ -122,7 +131,7 @@ class Room extends React.Component {
 
     render() {
         var tableStyle = {
-            width: "70vw",
+            width: "97vw",
         };
 
 
@@ -188,7 +197,7 @@ class Content extends React.Component
    render()
    {
        return (
-           <MuiThemeProvider>
+           <MuiThemeProvider muiTheme={muiTheme}>
                <div>
                    <Header/>
                    <Body/>

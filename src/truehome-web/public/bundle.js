@@ -56,6 +56,12 @@
 
 	var _MuiThemeProvider2 = _interopRequireDefault(_MuiThemeProvider);
 
+	var _getMuiTheme = __webpack_require__(143);
+
+	var _getMuiTheme2 = _interopRequireDefault(_getMuiTheme);
+
+	var _colors = __webpack_require__(158);
+
 	var _AppBar = __webpack_require__(205);
 
 	var _AppBar2 = _interopRequireDefault(_AppBar);
@@ -83,6 +89,12 @@
 	    timeout: 1000,
 	    proxy: {
 	        host: 'truehome-nutcrook.home.dyndns.org'
+	    }
+	});
+
+	var muiTheme = (0, _getMuiTheme2.default)({
+	    palette: {
+	        primary1Color: _colors.green700
 	    }
 	});
 
@@ -179,7 +191,7 @@
 	                null,
 	                React.createElement(
 	                    'td',
-	                    { width: '90%' },
+	                    { width: '100%' },
 	                    React.createElement(
 	                        'h5',
 	                        { className: 'controller' },
@@ -205,10 +217,7 @@
 	                    { style: buttonColStyle },
 	                    this.props.hasStatus && React.createElement(_Toggle2.default, {
 	                        toggled: switchedOn,
-	                        disabled: false,
-	                        thumbStyle: styles.thumbOff,
 	                        thumbSwitchedStyle: styles.thumbSwitched,
-	                        trackStyle: styles.trackOff,
 	                        trackSwitchedStyle: styles.trackSwitched,
 	                        onToggle: function onToggle() {
 	                            return _this5.triggerSwitch(!switchedOn).bind(_this5);
@@ -246,7 +255,7 @@
 	        key: 'render',
 	        value: function render() {
 	            var tableStyle = {
-	                width: "70vw"
+	                width: "97vw"
 	            };
 
 	            return React.createElement(
@@ -356,7 +365,7 @@
 	        value: function render() {
 	            return React.createElement(
 	                _MuiThemeProvider2.default,
-	                null,
+	                { muiTheme: muiTheme },
 	                React.createElement(
 	                    'div',
 	                    null,
