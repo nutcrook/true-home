@@ -1,6 +1,6 @@
 from neobunch import neobunchify as bunchify
 from flask import Flask, jsonify
-from relayer_requests import true_home_api, data_retrieval, data_manipulation
+from relayer_requests import true_home_api, data_retrieval, data_manipulation, check_connectivity
 import json
 
 
@@ -79,3 +79,9 @@ def get_devices_in_room(room_id=None, **kwargs):
 def set_device_status(device_id, status):
     return prepare_response(data_manipulation(**{'device_id': device_id,
                                                  'status': status}))
+
+
+@app.route('/validate_connection', methods=['GET'])
+@true_home_api(permission_needed=False)
+def check_connection_home():
+    return prepare_response(check_connectivity())

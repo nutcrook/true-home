@@ -1,10 +1,15 @@
 from neobunch import neobunchify as bunchify
+from neobunch import NeoBunch as Bunch
 from functools import wraps
 import json
 import requests
+from socket import socket
 
-
-REQUEST_TEMPLATE ='http://nutcrook.home.dyndns.org:3480/data_request'
+REMOTE_PORT = 3480
+REMOTE_HOST = 'nutcrook.home.dyndns.org'
+REMOTE_URI = 'http://{host}:{port}'.format(host=REMOTE_HOST,
+                                           port=REMOTE_PORT)
+REQUEST_TEMPLATE = REMOTE_URI + '/data_request'
 
 
 CHANGE_REQUEST_PARAMS_MAP = {
@@ -74,6 +79,16 @@ def data_retrieval(request_key='data', **kwargs):
             return 'Woops! Return Code {}: {}'.format(r.status_code, r.text)
     except Exception as e:
         return str(e)
+
+
+def check_connectivity():
+    response = Bunch(connection_established=False)
+    s = socket()
+    try:
+        s.connect((REMOTE_HOST, REMOTE_PORT))
+        response.connection_established = True
+    finally:
+        return response
 
 
 def true_home_api(permission_needed):
