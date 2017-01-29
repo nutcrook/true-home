@@ -1,6 +1,15 @@
 var React = require('react');
 var ReactDOM = require('react-dom');
-import ReactBootstrapToggle from 'react-bootstrap-toggle';
+import injectTapEventPlugin from 'react-tap-event-plugin';
+import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
+import getMuiTheme from 'material-ui/styles/getMuiTheme';
+import {
+    blue800
+} from 'material-ui/styles/colors';
+import AppBar from 'material-ui/AppBar';
+import Toggle from 'material-ui/Toggle';
+
+injectTapEventPlugin();
 
 var instance = axios.create({
   baseURL: '/api',
@@ -8,6 +17,12 @@ var instance = axios.create({
   proxy: {
     host: 'truehome-nutcrook.home.dyndns.org',
   }
+});
+
+const muiTheme = getMuiTheme({
+  palette: {
+      primary1Color: blue800,
+  },
 });
 
 class Controller extends React.Component
@@ -63,25 +78,40 @@ class Controller extends React.Component
         const switchedOn = this.state.stateSet == true ? this.state.status : this.props.status;
         const temp =  this.state.stateSet == true ? this.state.temperature : this.props.temperature;
 
+        const styles = {
+          thumbSwitched: {
+            backgroundColor: '#1565C0',
+          },
+          thumbOff: {
+            backgroundColor: '#D32F2F',
+          },
+          trackOff: {
+            backgroundColor: '#EF9A9A',
+          },
+          trackSwitched: {
+            backgroundColor: '#90CAF9',
+          },
+          title: {
+              width: "100%"
+          }
+        };
+
         var buttonColStyle = {
             textAlign: "right"
         };
 
         return (
                  <tr>
-                 <td width="90%"><h5 className='controller'>{this.props.name}{ watts != null &&
+                 <td style={styles.title}><h5 className='controller'>{this.props.name}{ watts != null &&
                  <small> {watts} Watts</small>
                  }{ temp != null &&
                  <small> {parseFloat((temp - 32)*5/9).toFixed(2)} °C</small>
                  }</h5></td>
-                 <td style={buttonColStyle}>{this.props.hasStatus && <ReactBootstrapToggle
-                     key={this.props.id}
-                     on="ON"
-                     off="OFF"
-                     active={switchedOn}
-                     size="mini" onstyle="success" offstyle="danger"
-                     onChange={()=> this.triggerSwitch(!switchedOn).bind(this)}/>}</td></tr>
-
+                 <td style={buttonColStyle}>{this.props.hasStatus && <Toggle
+                     toggled={switchedOn}
+                     thumbSwitchedStyle={styles.thumbSwitched}
+                     trackSwitchedStyle={styles.trackSwitched}
+                     onToggle={()=> this.triggerSwitch(!switchedOn).bind(this)}/>}</td></tr>
         );
     }
 
@@ -102,13 +132,15 @@ class Room extends React.Component {
 
     render() {
         var tableStyle = {
-            width: "70vw",
+            width: "98vw",
+            marginLeft: "1vw",
+            marginRight: "1vw"
         };
 
 
         return (
-                <div style={{padding: '15px'}}>
-                    <h3>{this.props.name}</h3>
+                <div>
+                    <h3 style={{marginLeft: "0.5vw"}}>{this.props.name}</h3>
                     <table className="table table-sm" style={tableStyle}><tbody>
                     {this.state.controllers.map(function(controller){
                      return <Controller name={controller.name}
@@ -129,7 +161,9 @@ class Header extends React.Component
     {
         return (
                 <div>
-                    <h1>TrueHome</h1>
+                    <AppBar
+                        title="TrueHome"
+                        iconClassNameRight="muidocs-icon-navigation-expand-more"/>
                 </div>
         );
     }
@@ -166,10 +200,12 @@ class Content extends React.Component
    render()
    {
        return (
+           <MuiThemeProvider muiTheme={muiTheme}>
                <div>
                    <Header/>
                    <Body/>
                </div>
+           </MuiThemeProvider>
        );
    }
 }
