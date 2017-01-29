@@ -94,7 +94,7 @@
 
 	var muiTheme = (0, _getMuiTheme2.default)({
 	    palette: {
-	        primary1Color: _colors.green700
+	        primary1Color: _colors.blue800
 	    }
 	});
 
@@ -169,7 +169,7 @@
 
 	            var styles = {
 	                thumbSwitched: {
-	                    backgroundColor: '#388E3C'
+	                    backgroundColor: '#1565C0'
 	                },
 	                thumbOff: {
 	                    backgroundColor: '#D32F2F'
@@ -178,7 +178,10 @@
 	                    backgroundColor: '#EF9A9A'
 	                },
 	                trackSwitched: {
-	                    backgroundColor: '#A5D6A7'
+	                    backgroundColor: '#90CAF9'
+	                },
+	                title: {
+	                    width: "100%"
 	                }
 	            };
 
@@ -191,7 +194,7 @@
 	                null,
 	                React.createElement(
 	                    'td',
-	                    { width: '100%' },
+	                    { style: styles.title },
 	                    React.createElement(
 	                        'h5',
 	                        { className: 'controller' },
@@ -255,15 +258,17 @@
 	        key: 'render',
 	        value: function render() {
 	            var tableStyle = {
-	                width: "97vw"
+	                width: "98vw",
+	                marginLeft: "1vw",
+	                marginRight: "1vw"
 	            };
 
 	            return React.createElement(
 	                'div',
-	                { style: { padding: '15px' } },
+	                null,
 	                React.createElement(
 	                    'h3',
-	                    null,
+	                    { style: { marginLeft: "0.5vw" } },
 	                    this.props.name
 	                ),
 	                React.createElement(

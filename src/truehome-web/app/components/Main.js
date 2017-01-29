@@ -4,9 +4,7 @@ import injectTapEventPlugin from 'react-tap-event-plugin';
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import getMuiTheme from 'material-ui/styles/getMuiTheme';
 import {
-    grey400,
-    green700,
-    grey900,
+    blue800
 } from 'material-ui/styles/colors';
 import AppBar from 'material-ui/AppBar';
 import Toggle from 'material-ui/Toggle';
@@ -23,7 +21,7 @@ var instance = axios.create({
 
 const muiTheme = getMuiTheme({
   palette: {
-      primary1Color: green700,
+      primary1Color: blue800,
   },
 });
 
@@ -82,7 +80,7 @@ class Controller extends React.Component
 
         const styles = {
           thumbSwitched: {
-            backgroundColor: '#388E3C',
+            backgroundColor: '#1565C0',
           },
           thumbOff: {
             backgroundColor: '#D32F2F',
@@ -91,7 +89,10 @@ class Controller extends React.Component
             backgroundColor: '#EF9A9A',
           },
           trackSwitched: {
-            backgroundColor: '#A5D6A7',
+            backgroundColor: '#90CAF9',
+          },
+          title: {
+              width: "100%"
           }
         };
 
@@ -101,7 +102,7 @@ class Controller extends React.Component
 
         return (
                  <tr>
-                 <td width="100%"><h5 className='controller'>{this.props.name}{ watts != null &&
+                 <td style={styles.title}><h5 className='controller'>{this.props.name}{ watts != null &&
                  <small> {watts} Watts</small>
                  }{ temp != null &&
                  <small> {parseFloat((temp - 32)*5/9).toFixed(2)} °C</small>
@@ -131,13 +132,15 @@ class Room extends React.Component {
 
     render() {
         var tableStyle = {
-            width: "97vw",
+            width: "98vw",
+            marginLeft: "1vw",
+            marginRight: "1vw"
         };
 
 
         return (
-                <div style={{padding: '15px'}}>
-                    <h3>{this.props.name}</h3>
+                <div>
+                    <h3 style={{marginLeft: "0.5vw"}}>{this.props.name}</h3>
                     <table className="table table-sm" style={tableStyle}><tbody>
                     {this.state.controllers.map(function(controller){
                      return <Controller name={controller.name}
