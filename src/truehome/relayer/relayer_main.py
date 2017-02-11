@@ -4,6 +4,7 @@ from relayer_requests import true_home_api
 import json
 
 from truehome.utils import VENDORS
+from truehome.utils.scheduling.schedule_api import get_scheduled_jobs, delete_at_job, delete_cron_job
 from truehome.vendors.vera.api import VeraBridge
 
 app = Flask(__name__)
@@ -91,3 +92,23 @@ def set_device_status(device_id, status):
 @true_home_api(permission_needed=False)
 def check_connection_home():
     return prepare_response(VENDORS_API[VENDORS.Vera].check_connectivity())
+
+
+@app.route('/schedule/list_jobs', methods=['GET'])
+@true_home_api(permission_needed=False)
+def list_scheduled_jobs():
+    jobs = get_scheduled_jobs()
+    return prepare_response(jobs)
+
+
+@app.route('/schedule/delete_job/cron/<int:job_id>', methods=['GET', 'PUT'])
+@true_home_api(permission_needed=True)
+def delete_cron_job_by_id(job_id):
+    delete_cron_job(job_id)
+
+
+@app.route('/schedule/delete_job/at/<int:job_id>', methods=['GET', 'PUT'])
+@true_home_api(permission_needed=True)
+def delete_at_job_by_id(job_id):
+    success = delete_at_job(job_id)
+    return 'Success!' if success else 'Failed :('
