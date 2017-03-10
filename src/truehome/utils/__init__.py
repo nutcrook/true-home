@@ -1,3 +1,14 @@
+from werkzeug.routing import BaseConverter
+
+
+class StatusConverter(BaseConverter):
+    def to_python(self, value):
+        return value
+
+    def to_url(self, value):
+        return BaseConverter.to_url(value)
+
+
 @property
 def NotImplementedField(self):
     raise NotImplementedError('Property not implemented for {}'.format(self))

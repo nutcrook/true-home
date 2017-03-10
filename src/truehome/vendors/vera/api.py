@@ -26,13 +26,33 @@ class VeraBridge(BaseVendorBridge):
                  'output_format': 'json'}
     }
 
+    STATUS_MAP = {
+        'on': 1,
+        'off': 0,
+        'enable': 1,
+        'disable': 0,
+        'true': int(True),
+        'false': int(False),
+        1: 1,
+        0: 0
+    }
+
+    def _fix_status(self, status):
+        if isinstance(status, str):
+            status = status.lower()
+
+        if status in self.STATUS_MAP:
+            return self.STATUS_MAP[status]
+        else:
+            raise KeyError('Invalid device state: {}'.format(status))
+
     def align_change_request_params(self, **request_params):
         request_params.update(self.CHANGE_REQUEST_PARAMS_MAP)
 
         request_params['DeviceNum'] = request_params['device_id']
         del request_params['device_id']
 
-        request_params['newTargetValue'] = request_params['status']
+        request_params['newTargetValue'] = self._fix_status(request_params['status'])
         del request_params['status']
 
         return request_params

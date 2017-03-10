@@ -4,10 +4,12 @@ from relayer_requests import true_home_api
 import json
 
 from truehome.utils import VENDORS
+from truehome.utils import StatusConverter
 from truehome.utils.scheduling.schedule_api import get_scheduled_jobs, delete_at_job, delete_cron_job
 from truehome.vendors.vera.api import VeraBridge
 
 app = Flask(__name__)
+app.url_map.converters['status'] = StatusConverter
 
 VENDORS_API = {
     VENDORS.Vera: VeraBridge()
@@ -81,7 +83,7 @@ def get_devices_in_room(room_id=None, **kwargs):
     return prepare_response(data)
 
 
-@app.route('/devices/<int:device_id>/<int:status>', methods=['GET', 'PUT'])
+@app.route('/devices/<int:device_id>/<status:status>', methods=['GET', 'PUT'])
 @true_home_api(permission_needed=True)
 def set_device_status(device_id, status):
     return prepare_response(VENDORS_API[VENDORS.Vera].data_manipulation(**{'device_id': device_id,
