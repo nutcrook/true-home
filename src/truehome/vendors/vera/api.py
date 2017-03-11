@@ -26,17 +26,6 @@ class VeraBridge(BaseVendorBridge):
                  'output_format': 'json'}
     }
 
-    STATUS_MAP = {
-        'on': 1,
-        'off': 0,
-        'enable': 1,
-        'disable': 0,
-        'true': int(True),
-        'false': int(False),
-        1: 1,
-        0: 0
-    }
-
     def _fix_status(self, status):
         if isinstance(status, str):
             status = status.lower()

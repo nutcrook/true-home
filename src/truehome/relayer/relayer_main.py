@@ -3,16 +3,21 @@ from flask import Flask, jsonify
 from relayer_requests import true_home_api
 import json
 
-from truehome.utils import VENDORS
+from truehome.utils import VENDORS, TadoModeConverter, TadoTemperatureConverter
 from truehome.utils import StatusConverter
 from truehome.utils.scheduling.schedule_api import get_scheduled_jobs, delete_at_job, delete_cron_job
+from truehome.vendors.tado.api import TadoBridge
 from truehome.vendors.vera.api import VeraBridge
 
 app = Flask(__name__)
 app.url_map.converters['status'] = StatusConverter
+app.url_map.converters['mode'] = TadoModeConverter
+app.url_map.converters['temperature'] = TadoTemperatureConverter
+
 
 VENDORS_API = {
-    VENDORS.Vera: VeraBridge()
+    VENDORS.Vera: VeraBridge(),
+    VENDORS.Tado: TadoBridge()
 }
 
 
@@ -114,3 +119,11 @@ def delete_cron_job_by_id(job_id):
 def delete_at_job_by_id(job_id):
     success = delete_at_job(job_id)
     return 'Success!' if success else 'Failed :('
+
+
+@app.route('/tado/zone/<int:zone_id>/<mode:mode>/<temperature:temperature>', methods=['GET', 'PUT'])
+@true_home_api(permission_needed=True)
+def control_ac(zone_id, mode, temperature):
+    return prepare_response(VENDORS_API[VENDORS.Tado].data_manipulation(**{'zone_id': zone_id,
+                                                                           'mode': mode,
+                                                                           'temperature': temperature}))

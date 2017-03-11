@@ -1,4 +1,7 @@
-from truehome.utils import NotImplementedField
+from truehome import NotImplementedField
+
+
+AC_TEMPERATURE_RANGE = range(16, 31)
 
 
 class BaseVendorBridge(object):
@@ -10,6 +13,24 @@ class BaseVendorBridge(object):
 
     CHANGE_REQUEST_PARAMS_MAP = NotImplementedField
     READ_REQUEST_PARAMS_MAP = NotImplementedField
+
+    STATUS_MAP = {
+        'on': 1,
+        'off': 0,
+        'enable': 1,
+        'disable': 0,
+        'true': int(True),
+        'false': int(False),
+        1: 1,
+        0: 0
+    }
+
+    def __init__(self, read_config=False):
+        if read_config:
+            self._load_config()
+
+    def _load_config(self):
+        pass
 
     def align_change_request_params(self, **request_params):
         raise NotImplementedError
