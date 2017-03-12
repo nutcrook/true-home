@@ -44,7 +44,7 @@ class Controller extends React.Component
    }
 
    tick() {
-       instance.get('/devices/' + this.props.id)
+       instance.get('/vera/devices/' + this.props.id)
             .then(result=> {
                 this.setState({watts: result.data[0].watts,
                                status: result.data[0].status == 1 ? true : false,
@@ -59,7 +59,7 @@ class Controller extends React.Component
        // Make sure the UI is updated
        this.setState({status: status});
 
-       var request = '/devices/';
+       var request = '/vera/devices/';
        request += this.props.id;
        request += '/';
        request += status ? '1' : '0';
@@ -124,7 +124,7 @@ class Room extends React.Component {
         this.state = {controllers: []};
     }
     componentDidMount() {
-    instance.get('/devices/by-room/' + this.props.id)
+    instance.get('/vera/devices/by-room/' + this.props.id)
             .then(result=> {
                 this.setState({controllers:result.data});
             });
@@ -177,7 +177,7 @@ class Body extends React.Component
     }
 
     componentDidMount() {
-        instance.get('/rooms')
+        instance.get('/vera/rooms')
                 .then(result=> {
                     this.setState({rooms:result.data});
                 });

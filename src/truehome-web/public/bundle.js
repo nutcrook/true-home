@@ -129,7 +129,7 @@
 	        value: function tick() {
 	            var _this3 = this;
 
-	            instance.get('/devices/' + this.props.id).then(function (result) {
+	            instance.get('/vera/devices/' + this.props.id).then(function (result) {
 	                _this3.setState({ watts: result.data[0].watts,
 	                    status: result.data[0].status == 1 ? true : false,
 	                    temperature: result.data[0].temperature,
@@ -146,7 +146,7 @@
 	            // Make sure the UI is updated
 	            this.setState({ status: status });
 
-	            var request = '/devices/';
+	            var request = '/vera/devices/';
 	            request += this.props.id;
 	            request += '/';
 	            request += status ? '1' : '0';
@@ -250,7 +250,7 @@
 	        value: function componentDidMount() {
 	            var _this7 = this;
 
-	            instance.get('/devices/by-room/' + this.props.id).then(function (result) {
+	            instance.get('/vera/devices/by-room/' + this.props.id).then(function (result) {
 	                _this7.setState({ controllers: result.data });
 	            });
 	        }
@@ -336,7 +336,7 @@
 	        value: function componentDidMount() {
 	            var _this10 = this;
 
-	            instance.get('/rooms').then(function (result) {
+	            instance.get('/vera/rooms').then(function (result) {
 	                _this10.setState({ rooms: result.data });
 	            });
 	        }
@@ -35471,7 +35471,7 @@
 	  /**
 	   * The DOM target to listen to.
 	   */
-	  target: _react.PropTypes.oneOfType([_react.PropTypes.object, _react.PropTypes.string])
+	  target: _react.PropTypes.oneOfType([_react.PropTypes.object, _react.PropTypes.string]).isRequired
 	} : void 0;
 	exports.default = EventListener;
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(2)))

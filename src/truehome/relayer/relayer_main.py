@@ -26,15 +26,15 @@ def prepare_response(data):
     return response
 
 
-@app.route('/summary', methods=['GET'])
+@app.route('/vera/summary', methods=['GET'])
 @true_home_api(permission_needed=True)
 def get_all_data(**kwargs):
     data = VENDORS_API[VENDORS.Vera].data_retrieval(**kwargs)
     return data
 
 
-@app.route('/rooms', methods=['GET'])
-@app.route('/rooms/<int:room_id>')
+@app.route('/vera/rooms', methods=['GET'])
+@app.route('/vera/rooms/<int:room_id>')
 @true_home_api(permission_needed=False)
 def all_rooms(room_id=None, **kwargs):
     if room_id:
@@ -53,8 +53,8 @@ def all_rooms(room_id=None, **kwargs):
     return prepare_response(data)
 
 
-@app.route('/devices', methods=['GET'])
-@app.route('/devices/<int:device_id>', methods=['GET'])
+@app.route('/vera/devices', methods=['GET'])
+@app.route('/vera/devices/<int:device_id>', methods=['GET'])
 @true_home_api(permission_needed=False)
 def get_devices(device_id=None, **kwargs):
     if device_id:
@@ -73,7 +73,7 @@ def get_devices(device_id=None, **kwargs):
     return prepare_response(data)
 
 
-@app.route('/devices/by-room/<int:room_id>', methods=['GET'])
+@app.route('/vera/devices/by-room/<int:room_id>', methods=['GET'])
 @true_home_api(permission_needed=False)
 def get_devices_in_room(room_id=None, **kwargs):
     kwargs.update({'room_id': room_id})
@@ -88,14 +88,14 @@ def get_devices_in_room(room_id=None, **kwargs):
     return prepare_response(data)
 
 
-@app.route('/devices/<int:device_id>/<status:status>', methods=['GET', 'PUT'])
+@app.route('/vera/devices/<int:device_id>/<status:status>', methods=['GET', 'PUT'])
 @true_home_api(permission_needed=True)
 def set_device_status(device_id, status):
     return prepare_response(VENDORS_API[VENDORS.Vera].data_manipulation(**{'device_id': device_id,
                                                                            'status': status}))
 
 
-@app.route('/validate_connection', methods=['GET'])
+@app.route('/vera/validate_connection', methods=['GET'])
 @true_home_api(permission_needed=False)
 def check_connection_home():
     return prepare_response(VENDORS_API[VENDORS.Vera].check_connectivity())
@@ -121,7 +121,7 @@ def delete_at_job_by_id(job_id):
     return 'Success!' if success else 'Failed :('
 
 
-@app.route('/tado/zone/<int:zone_id>/<mode:mode>/<temperature:temperature>', methods=['GET', 'PUT'])
+@app.route('/tado/zones/<int:zone_id>/<mode:mode>/<temperature:temperature>', methods=['GET', 'PUT'])
 @true_home_api(permission_needed=True)
 def control_ac(zone_id, mode, temperature):
     return prepare_response(VENDORS_API[VENDORS.Tado].data_manipulation(**{'zone_id': zone_id,
