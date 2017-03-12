@@ -67,7 +67,7 @@ class TadoBridge(BaseVendorBridge):
             token = self._get_token(self._username, self._password)
             tado_session = OAuth2Session(client_id='tado-webapp', token=token)
             tado_session.headers['Content-Type'] = 'application/json;charset=UTF-8'
-            r = tado_session.put(data=json.dump(self.CHANGE_REQUEST_PARAMS_MAP),
+            r = tado_session.put(data=json.dumps(self.CHANGE_REQUEST_PARAMS_MAP),
                                  url=self.REQUEST_TEMPLATE.format(request_type='overlay',
                                                                   home_id=self._home_id,
                                                                   zone_id=zone_id))
